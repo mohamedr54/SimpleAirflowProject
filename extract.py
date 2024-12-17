@@ -13,10 +13,35 @@ params = { "latitude" : 34.668138,
 
 reponse = requests.get(url,params=params)
 contenu = reponse.json()
+print(type(contenu))
 
-""" 
-for c,a in contenu.items(): 
-    print(c,a) 
-"""
+
+keys_to_delete=[]
+
+#here I am extracting everything that is not hourly or daily variables from the json and writing them into another txt file
+for element in contenu.keys():
+    if (element != "hourly") and (element != "daily"):
+        with open ("weather_info.txt", 'a') as file :
+            string= element + " : " + str (contenu[element])
+            file.write(string)
+            file.write("\n")
+            keys_to_delete.append(element)
+
+
+
+for key in keys_to_delete:
+    del contenu[key]
+
+
 with open("data.json", "w") as f:
-    json.dump(contenu, f)
+        json.dump(contenu,f)
+
+
+
+
+
+
+
+
+
+
