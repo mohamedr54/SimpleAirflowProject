@@ -3,7 +3,7 @@ import json
 
 
 
-def fetch_weather_data(url,parameters):
+def fetch_weather_data(url: str,parameters: dict):
     """
     :param url: url of the API
     :param parameters: the list of variables we want to fetch
@@ -16,7 +16,7 @@ def fetch_weather_data(url,parameters):
         raise Exception(f"Request failed with status code {fetched_data.status_code}")
 
 
-def extracting_useless_data(fetched_data,filename="weather_info.txt"):
+def extracting_useless_data(fetched_data: dict,filename: str ="weather_info.txt"):
     """
     this function takes the information we do not want to store and save them in a txt file named weather_info.txt.
     We iterate through the dictionary, add each non-wanted element to the weather_info.txt file and save the key
@@ -35,18 +35,18 @@ def extracting_useless_data(fetched_data,filename="weather_info.txt"):
                 keys_to_delete.append(element)
     return keys_to_delete
 
-def deleting_useless_data(fetched_data, list_of_keys):
+def deleting_useless_data(fetched_data: dict, list_of_keys: list):
     """
-
+    remove elements that have been stored in the weather_info.txt file
     :param fetched_data: raw data fetched from weather website with fetch_weather_data function
     :param list_of_keys: the list of keys we obtained by using extracting_useless_data function
     :return:
     """
     for element in list_of_keys:
-        del fetched_data[element    ]
+        del fetched_data[element]
+    return fetched_data
 
-
-def saving_useful_data(clean_fetched_data,filename="clean_data.json"):
+def saving_useful_data(clean_fetched_data: dict,filename: str ="clean_data.json"):
     """
 
     :param filename: name of the file where clean data will be stored
