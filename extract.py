@@ -1,40 +1,62 @@
 import requests
 import json
-url = "https://api.open-meteo.com/v1/forecast"
-params = { "latitude" : 34.668138,
-           "longitude" : 104.16580199999999,
-           "temperature_unit" : "celsius",
-           "wind_speed_unit" : "kmh",
-           "precipitation_unit" :"mm",
-           "hourly": ["temperature_2m", "cloud_cover", "wind_speed_10m", "wind_speed_80m", "wind_direction_10m",
-                      "wind_direction_80m", "snowfall", "precipitation_probability"],
-           "daily": ["temperature_2m_max", "temperature_2m_min", "daylight_duration", "uv_index_max", "uv_index_clear_sky_max",
-                     "wind_direction_10m_dominant", "rain_sum", "precipitation_sum", ] }
-
-reponse = requests.get(url,params=params)
-contenu = reponse.json()
-print(type(contenu))
-
-
-keys_to_delete=[]
-
-#here I am extracting everything that is not hourly or daily variables from the json and writing them into another txt file
-for element in contenu.keys():
-    if (element != "hourly") and (element != "daily"):
-        with open ("weather_info.txt", 'a') as file :
-            string= element + " : " + str (contenu[element])
-            file.write(string)
-            file.write("\n")
-            keys_to_delete.append(element)
 
 
 
-for key in keys_to_delete:
-    del contenu[key]
+def fetch_weather_data(url,parameters):
+    """
+    :param url: url of the API
+    :param parameters: the list of variables we want to fetch
+    :return: returns raw data from the weather website
+    """
+    fetched_data=requests.get(url,params=parameters)
+    if fetched_data.status_code == 200:
+        return fetched_data.json()
+    else:
+        raise Exception(f"Request failed with status code {fetched_data.status_code}")
 
 
-with open("data.json", "w") as f:
-        json.dump(contenu,f)
+def extracting_useless_data(fetched_data,filename="weather_info.txt"):
+    """
+    this function takes the information we do not want to store and save them in a txt file named weather_info.txt.
+    We iterate through the dictionary, add each non-wanted element to the weather_info.txt file and save the key
+    to remove the element later.
+    :param filename: name of the file where useless information will be stored
+    :param fetched_data: raw data fetched from weather website with fetch_weather_data function
+    :return: returns a list of keys that must be deleted from the dictionary
+    """
+    keys_to_delete=[]
+    for element in fetched_data.keys():
+        if (element != "hourly") and (element != "daily"):
+            with open(filename, 'a') as file:
+                string = element + " : " + str(fetched_data[element])
+                file.write(string)
+                file.write("\n")
+                keys_to_delete.append(element)
+    return keys_to_delete
+
+def deleting_useless_data(fetched_data, list_of_keys):
+    """
+
+    :param fetched_data: raw data fetched from weather website with fetch_weather_data function
+    :param list_of_keys: the list of keys we obtained by using extracting_useless_data function
+    :return:
+    """
+    for element in list_of_keys:
+        del fetched_data[element    ]
+
+
+def saving_useful_data(clean_fetched_data,filename="clean_data.json"):
+    """
+
+    :param filename: name of the file where clean data will be stored
+    :param clean_fetched_data: the data fetched from web we want to store. it has been cleaned with
+    deleting_useless_data function
+    :return: it does not return anything.
+    """
+    with open(filename, "w") as f:
+        json.dump(clean_fetched_data, f)
+
 
 
 
