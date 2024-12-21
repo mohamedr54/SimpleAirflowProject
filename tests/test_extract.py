@@ -66,7 +66,29 @@ def test_fetch_weather_data_failure():
 
 
 def test_extracting_useless_data():
-   pass
+    test = {
+        "latitude": 34.625,
+        "longitude": 104.125,
+        "hourly": {"temperature_2m": [10, 12, 14]},
+        "daily": {"temperature_2m_max": [15, 16, 17]}
+    }
+
+    liste = []
+    filename = "./tests/temp/test_useless_data.txt"
+    for element in test.keys():
+        if element != "hourly" and element != "daily":
+            with open(filename, 'a') as file:
+                string = element + " : " + str(test[element])
+                file.write(string)
+                file.write("\n")
+                liste.append(element)
+
+    with open(filename, "r") as f:
+        my_content = f.read()
+    assert my_content == "latitude : 34.625\nlongitude : 104.125\n"
+    assert liste == ["latitude", "longitude"]
+    os.remove(filename)
+
 
 def test_deleting_useless_data():
     test_data = {
@@ -90,16 +112,13 @@ def test_saving_useful_data():
         "daily": {"temperature_2m_max": [15, 16, 17]}
     }
 
-    filename = "mocked_clean_data.json"
+    filename = "./tests/temp/test_clean_data.txt"
+    saving_useful_data(clean_fetched_data,filename)
 
-    # Tester la fonction qui écrit dans un fichier
-    with open(filename, "w") as f:
-        json.dump(clean_fetched_data, f)
+    with open (filename,"r") as f:
+        expectations = json.load(f)
 
-    # Vérification
-    with open(filename, "r") as f:
-        content = json.load(f)
-    assert content == clean_fetched_data
+    assert saving_useful_data(clean_fetched_data, filename) == clean_fetched_data
+    #écrire et assert que quand on ouvre le fichier on lise le bon truc
 
-    # Nettoyage (suppression du fichier temporaire)
     os.remove(filename)
