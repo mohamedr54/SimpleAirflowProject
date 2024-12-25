@@ -91,10 +91,6 @@ def dropping_nan_values(dataframe:pd.DataFrame):
     return dataframe
 
 
-
-
-
-
 def saving_to_csv(final_df):
     """
     this function saves the final dataframe to a csv file
@@ -102,6 +98,8 @@ def saving_to_csv(final_df):
     """
     final_df.to_csv("final.csv")
 
-
-
-
+with open("data.json", "r") as file:  # extracting hourly and daily variables as proper dictionaries
+    my_data = json.load(file)
+hourly_dict = my_data['hourly']
+daily_dict = my_data['daily']
+print(type(hourly_dict))

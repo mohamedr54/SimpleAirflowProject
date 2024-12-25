@@ -57,6 +57,8 @@ def saving_useful_data(clean_fetched_data: dict,filename: str ="clean_data.json"
     with open(filename, "w") as f:
         json.dump(clean_fetched_data, f)
 
+    return clean_fetched_data
+
 
 
 
