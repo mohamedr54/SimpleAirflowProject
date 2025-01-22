@@ -27,7 +27,7 @@ def extracting_useless_data(fetched_data: dict,filename: str ="weather_info.txt"
     """
     keys_to_delete=[]
     for element in fetched_data.keys():
-        if (element != "hourly") and (element != "daily"):
+        if element != "hourly":
             with open(filename, 'a') as file:
                 string = element + " : " + str(fetched_data[element])
                 file.write(string)

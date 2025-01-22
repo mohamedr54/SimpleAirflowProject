@@ -17,16 +17,13 @@ def test_fetch_weather_data_success():
         "temperature_unit": "celsius",
         "wind_speed_unit": "kmh",
         "precipitation_unit": "mm",
-        "hourly": ["temperature_2m"],
-        "daily": ["temperature_2m_max"]
+        "hourly": ["temperature_2m","cloud_cover"]
     }
 
     mock_response = {
         "latitude": 34.625,
         "longitude": 104.125,
-        "hourly": {"temperature_2m": [10, 12, 14]},
-        "daily": {"temperature_2m_max": [15, 16, 17]}
-    }
+        "hourly": {"temperature_2m": [10, 12, 14],"cloud_cover": [0, 0, 3]}}
     #note :mocks are simulated objects which have the same behaviour as a real object
 
     # we use mock to simulate requests.get
@@ -52,8 +49,7 @@ def test_fetch_weather_data_failure():
         "temperature_unit": "celsius",
         "wind_speed_unit": "kmh",
         "precipitation_unit": "mm",
-        "hourly": ["temperature_2m"],
-        "daily": ["temperature_2m_max"]
+        "hourly": ["temperature_2m","cloud_cover"]
     }
 
     # this time we simulate a server error
@@ -69,14 +65,13 @@ def test_extracting_useless_data():
     test = {
         "latitude": 34.625,
         "longitude": 104.125,
-        "hourly": {"temperature_2m": [10, 12, 14]},
-        "daily": {"temperature_2m_max": [15, 16, 17]}
+        "hourly": {"temperature_2m": [10, 12, 14],"cloud_cover": [0, 0, 3]},
     }
 
     liste = []
     filename = "./tests/temp/test_useless_data.txt"
     for element in test.keys():
-        if element != "hourly" and element != "daily":
+        if element != "hourly":
             with open(filename, 'a') as file:
                 string = element + " : " + str(test[element])
                 file.write(string)
@@ -97,19 +92,16 @@ def test_deleting_useless_data():
         "generationtime_ms": 0.0940561294555664,
         "utc_offset_seconds": 0,
         "timezone": "GMT",
-        "hourly": {"temperature_2m": [10, 12, 14]},
-        "daily": {"temperature_2m_max": [15, 16, 17]}
+        "hourly": {"temperature_2m": [10, 12, 14],"cloud_cover": [0, 0, 3]}
     }
     test_list_of_keys=[ "latitude","longitude","generationtime_ms","utc_offset_seconds","timezone",]
-    assert deleting_useless_data(test_data,test_list_of_keys)== {"hourly": {"temperature_2m": [10, 12, 14]},
-        "daily": {"temperature_2m_max": [15, 16, 17]}}
+    assert deleting_useless_data(test_data,test_list_of_keys)== {"hourly": {"temperature_2m": [10, 12, 14],"cloud_cover": [0, 0, 3]}}
 
 
 def test_saving_useful_data():
     # Initialisation (préparation des ressources)
     clean_fetched_data = {
-        "hourly": {"temperature_2m": [10, 12, 14]},
-        "daily": {"temperature_2m_max": [15, 16, 17]}
+        "hourly": {"temperature_2m": [10, 12, 14],"cloud_cover": [0, 0, 3]},
     }
 
     filename = "./tests/temp/test_clean_data.txt"
